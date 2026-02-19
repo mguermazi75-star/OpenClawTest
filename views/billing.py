@@ -67,7 +67,7 @@ def create_billing_view(parent):
     
     # Date
     ttk.Label(invoice_frame, text="Date:").grid(row=0, column=2, sticky=W, padx=5)
-    invoice_date = ttk.DateEntry(invoice_frame)
+    invoice_date = DateEntry(invoice_frame)
     invoice_date.grid(row=0, column=3, padx=5, sticky=W)
     
     # Item form

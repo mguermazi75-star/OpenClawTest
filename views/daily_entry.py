@@ -4,6 +4,7 @@ Daily Entry view - Form for daily stock/mortality/production
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.widgets import DateEntry
 from controllers import DailyController
 from models import DailyEntry
 
@@ -18,7 +19,7 @@ def create_daily_entry_view(parent):
     
     # Date
     ttk.Label(form_frame, text="📅 Date:").grid(row=0, column=0, sticky=W, pady=10)
-    date_entry = ttk.DateEntry(form_frame)
+    date_entry = DateEntry(form_frame)
     date_entry.grid(row=0, column=1, padx=10, sticky=W)
     
     # Stock
