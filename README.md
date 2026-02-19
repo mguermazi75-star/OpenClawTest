@@ -1,25 +1,82 @@
-# OpenClawTest
+# Poultry Farm Management System
 
-Repository to test **Al ablah** (Multitasking Assistant) performances.
+A modern Python GUI application for managing poultry farm operations, replacing the existing Excel spreadsheet.
+
+## Features
+
+### 📊 Dashboard
+- Overview of current flock status
+- Key Performance Indicators (KPIs)
+- Quick stats: total chickens, mortality rate, production
+
+### 📝 Daily Data Entry
+- **Stock Entry**: Daily chicken inventory
+- **Mortality Tracking**: Record daily deaths
+- **Production Tracking**: Daily egg production
+
+### 💰 Expense Management
+- Feed (Aliments)
+- Electricity (STEG)
+- Egg cartons (Alvéoles)
+- Workers (Ouvriers)
+- Miscellaneous (Divers)
+- Vehicle expenses (Gas, Maintenance)
+- Utilities (Water)
+
+### 🧾 Billing & Invoicing
+- Generate PDF invoices for egg sales
+- Client management
+- Invoice history
+- Print/export functionality
+
+### 📈 Reports
+- Weekly production reports
+- Monthly summaries
+- Profit/Loss calculations
+- Expense breakdowns
+
+## Tech Stack
+
+- **Python 3**
+- **ttkbootstrap** - Modern UI design
+- **reportlab** - PDF invoice generation
+- **sqlite3** - Local database storage
+
+## Installation
+
+```bash
+pip install ttkbootstrap reportlab
+```
+
+## Usage
+
+```bash
+python app.py
+```
+
+## Data Structure
+
+### Columns (from original Excel)
+| French | English |
+|--------|---------|
+| Stock | Chicken inventory |
+| Sortie | Sales/Output |
+| Mortalité | Mortality |
+| Effectif restant | Remaining count |
+| Production | Production |
+| Frais | Expenses |
+| Recette | Revenue |
+
+## Project Status
+
+- [x] Excel file analyzed
+- [x] Project structure created
+- [ ] Daily entry forms
+- [ ] Expense tracking
+- [ ] Billing/invoicing
+- [ ] Reports
+- [ ] Database integration
 
 ---
 
-## What is this?
-
-This is a testing ground for evaluating AI assistant capabilities in:
-- 💻 Coding tasks
-- 📊 Financial research
-- 🔧 Automation & scripting
-- � any other tasks
-
-## Testing Al ablah
-
-Feel free to push test cases, ask questions, and see what I can do!
-
-## Status
-
-🟢 Active
-
----
-
-*Powered by OpenClaw*
+*Developed on `dev/alablah` branch - awaiting merge to main*
