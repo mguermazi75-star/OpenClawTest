@@ -107,8 +107,13 @@ class PoultryFarmApp(ttk.Window):
 
 
 def main():
-    app = PoultryFarmApp()
-    app.mainloop()
+    try:
+        app = PoultryFarmApp()
+        app.mainloop()
+    except Exception as e:
+        print(f"Error starting app: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
