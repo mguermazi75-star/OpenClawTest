@@ -1,0 +1,146 @@
+"""
+Controller for daily entries - Business logic
+"""
+
+from models import get_connection, DailyEntry
+from typing import List, Optional
+from datetime import datetime
+
+
+class DailyController:
+    """Business logic for daily entries"""
+    
+    @staticmethod
+    def save_entry(entry: DailyEntry) -> bool:
+        """Save a daily entry to database"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO daily_entries (date, stock, mortality, production, notes)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (entry.date, entry.stock, entry.mortality, entry.production, entry.notes))
+        
+        conn.commit()
+        conn.close()
+        return True
+    
+    @staticmethod
+    def get_all_entries(limit: int = 100) -> List[DailyEntry]:
+        """Get all daily entries"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, date, stock, mortality, production, notes
+            FROM daily_entries
+            ORDER BY date DESC
+            LIMIT ?
+        ''', (limit,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        entries = []
+        for row in rows:
+            entries.append(DailyEntry(
+                id=row[0],
+                date=row[1],
+                stock=row[2],
+                mortality=row[3],
+                production=row[4],
+                notes=row[5] or ""
+            ))
+        
+        return entries
+    
+    @staticmethod
+    def get_latest_entry() -> Optional[DailyEntry]:
+        """Get most recent entry"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, date, stock, mortality, production, notes
+            FROM daily_entries
+            ORDER BY date DESC
+            LIMIT 1
+        ''')
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return DailyEntry(
+                id=row[0],
+                date=row[1],
+                stock=row[2],
+                mortality=row[3],
+                production=row[4],
+                notes=row[5] or ""
+            )
+        return None
+    
+    @staticmethod
+    def get_entries_for_week(limit: int = 7) -> List[DailyEntry]:
+        """Get entries for last N days"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, date, stock, mortality, production, notes
+            FROM daily_entries
+            ORDER BY date DESC
+            LIMIT ?
+        ''', (limit,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [
+            DailyEntry(
+                id=row[0],
+                date=row[1],
+                stock=row[2],
+                mortality=row[3],
+                production=row[4],
+                notes=row[5] or ""
+            )
+            for row in rows
+        ]
+    
+    @staticmethod
+    def get_monthly_totals() -> dict:
+        """Get monthly totals"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        month = datetime.now().strftime("%Y-%m")
+        
+        cursor.execute(f'''
+            SELECT 
+                COALESCE(SUM(production), 0) as total_production,
+                COALESCE(SUM(mortality), 0) as total_mortality,
+                COALESCE(AVG(stock), 0) as avg_stock
+            FROM daily_entries 
+            WHERE date LIKE '{month}%'
+        ''')
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        return {
+            'production': row[0],
+            'mortality': row[1],
+            'avg_stock': row[2]
+        }
+    
+    @staticmethod
+    def delete_entry(entry_id: int) -> bool:
+        """Delete an entry"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM daily_entries WHERE id = ?', (entry_id,))
+        conn.commit()
+        conn.close()
+        return True
