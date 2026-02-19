@@ -10,6 +10,7 @@ from controllers import ReportController
 def create_reports_view(parent):
     """Create and return reports frame"""
     frame = ttk.Frame(parent)
+    frame.pack(fill=BOTH, expand=True)
     
     # Controls
     control_frame = ttk.Frame(frame)

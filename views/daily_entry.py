@@ -12,6 +12,7 @@ from models import DailyEntry
 def create_daily_entry_view(parent):
     """Create and return daily entry form frame"""
     frame = ttk.Frame(parent)
+    frame.pack(fill=BOTH, expand=True)
     
     # Form frame
     form_frame = ttk.LabelFrame(frame, text="📝 Daily Data Entry", padding=20)

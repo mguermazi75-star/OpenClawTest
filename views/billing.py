@@ -15,6 +15,7 @@ import os
 def create_billing_view(parent):
     """Create and return billing form frame"""
     frame = ttk.Frame(parent)
+    frame.pack(fill=BOTH, expand=True)
     
     # ==================== CLIENT MANAGEMENT ====================
     client_frame = ttk.LabelFrame(frame, text="👤 Client Management", padding=15)

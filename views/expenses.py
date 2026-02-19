@@ -13,6 +13,7 @@ from utils import EXPENSE_CATEGORIES
 def create_expenses_view(parent):
     """Create and return expenses form frame"""
     frame = ttk.Frame(parent)
+    frame.pack(fill=BOTH, expand=True)
     
     # Form frame
     form_frame = ttk.LabelFrame(frame, text="💰 Add Expense", padding=20)

@@ -10,6 +10,7 @@ from controllers import DailyController, ExpenseController
 def create_dashboard_view(parent):
     """Create and return dashboard frame"""
     frame = ttk.Frame(parent)
+    frame.pack(fill=BOTH, expand=True)
     
     # Stats cards row
     stats_frame = ttk.Frame(frame)
