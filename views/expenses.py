@@ -4,6 +4,7 @@ Expenses view - Form for expense tracking
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.widgets import DateEntry
 from controllers import ExpenseController
 from models import Expense
 from utils import EXPENSE_CATEGORIES

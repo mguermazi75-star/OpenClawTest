@@ -4,6 +4,7 @@ Billing view - Client & Invoice management
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.widgets import DateEntry
 from controllers import BillingController
 from models import Client
 from utils import PDFGenerator
