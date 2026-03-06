@@ -15,6 +15,7 @@ class DailyEntry:
     stock: int = 0
     mortality: int = 0
     production: int = 0
+    egg_price: float = 0.0  # Price per egg in EUR
     notes: str = ""
     
     @property

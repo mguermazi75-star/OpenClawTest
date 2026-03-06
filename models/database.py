@@ -24,9 +24,16 @@ def init_db():
             stock INTEGER,
             mortality INTEGER,
             production INTEGER,
+            egg_price REAL DEFAULT 0.0,
             notes TEXT
         )
     ''')
+    
+    # Add egg_price column if it doesn't exist (for existing databases)
+    try:
+        cursor.execute('ALTER TABLE daily_entries ADD COLUMN egg_price REAL DEFAULT 0.0')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     
     # Expenses table
     cursor.execute('''

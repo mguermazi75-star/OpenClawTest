@@ -17,9 +17,9 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO daily_entries (date, stock, mortality, production, notes)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (entry.date, entry.stock, entry.mortality, entry.production, entry.notes))
+            INSERT INTO daily_entries (date, stock, mortality, production, egg_price, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (entry.date, entry.stock, entry.mortality, entry.production, entry.egg_price, entry.notes))
         
         conn.commit()
         conn.close()
@@ -32,7 +32,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, notes
+            SELECT id, date, stock, mortality, production, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT ?
@@ -49,7 +49,8 @@ class DailyController:
                 stock=row[2],
                 mortality=row[3],
                 production=row[4],
-                notes=row[5] or ""
+                egg_price=row[5] or 0.0,
+                notes=row[6] or ""
             ))
         
         return entries
@@ -61,7 +62,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, notes
+            SELECT id, date, stock, mortality, production, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT 1
@@ -77,7 +78,8 @@ class DailyController:
                 stock=row[2],
                 mortality=row[3],
                 production=row[4],
-                notes=row[5] or ""
+                egg_price=row[5] or 0.0,
+                notes=row[6] or ""
             )
         return None
     
@@ -88,7 +90,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, notes
+            SELECT id, date, stock, mortality, production, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT ?
@@ -104,7 +106,8 @@ class DailyController:
                 stock=row[2],
                 mortality=row[3],
                 production=row[4],
-                notes=row[5] or ""
+                egg_price=row[5] or 0.0,
+                notes=row[6] or ""
             )
             for row in rows
         ]

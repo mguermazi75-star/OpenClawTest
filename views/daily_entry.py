@@ -38,10 +38,15 @@ def create_daily_entry_view(parent):
     production_entry = ttk.Entry(form_frame, width=30)
     production_entry.grid(row=3, column=1, padx=10, sticky=W)
     
+    # Egg Price
+    ttk.Label(form_frame, text="💶 Egg Price (€):").grid(row=4, column=0, sticky=W, pady=10)
+    egg_price_entry = ttk.Entry(form_frame, width=30)
+    egg_price_entry.grid(row=4, column=1, padx=10, sticky=W)
+    
     # Notes
-    ttk.Label(form_frame, text="📋 Notes:").grid(row=4, column=0, sticky=W, pady=10)
+    ttk.Label(form_frame, text="📋 Notes:").grid(row=5, column=0, sticky=W, pady=10)
     notes_entry = ttk.Entry(form_frame, width=30)
-    notes_entry.grid(row=4, column=1, padx=10, sticky=W)
+    notes_entry.grid(row=5, column=1, padx=10, sticky=W)
     
     # Message label
     message_label = ttk.Label(form_frame, text="", bootstyle="success")
@@ -53,6 +58,7 @@ def create_daily_entry_view(parent):
         stock = stock_entry.get()
         mortality = mortality_entry.get()
         production = production_entry.get()
+        egg_price = egg_price_entry.get()
         notes = notes_entry.get()
         
         if not date:
@@ -64,6 +70,7 @@ def create_daily_entry_view(parent):
             stock=int(stock) if stock else 0,
             mortality=int(mortality) if mortality else 0,
             production=int(production) if production else 0,
+            egg_price=float(egg_price) if egg_price else 0.0,
             notes=notes
         )
         
@@ -75,6 +82,7 @@ def create_daily_entry_view(parent):
         stock_entry.delete(0, END)
         mortality_entry.delete(0, END)
         production_entry.delete(0, END)
+        egg_price_entry.delete(0, END)
         notes_entry.delete(0, END)
         
         # Refresh history
@@ -93,11 +101,11 @@ def create_daily_entry_view(parent):
     history_frame.pack(fill=BOTH, expand=True, padx=20, pady=10)
     
     # Treeview
-    columns = ("Date", "Stock", "Mortality", "Production", "Notes")
+    columns = ("Date", "Stock", "Mortality", "Production", "Egg Price", "Notes")
     tree = ttk.Treeview(history_frame, columns=columns, show="headings")
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=150)
+        tree.column(col, width=120)
     tree.pack(fill=BOTH, expand=True)
     
     def refresh_history():
@@ -112,6 +120,7 @@ def create_daily_entry_view(parent):
                 entry.stock, 
                 entry.mortality, 
                 entry.production,
+                f"€{entry.egg_price:.2f}",
                 entry.notes
             ))
     
