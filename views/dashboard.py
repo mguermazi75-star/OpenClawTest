@@ -246,7 +246,7 @@ def create_activity_table(parent):
     # Treeview
     tree = ttk.Treeview(
         parent,
-        columns=("Date", "Remaining", "Mortality", "Production", "Egg Price"),
+        columns=("Date", "Chickens", "Mortality", "Produced", "Sold", "Remaining", "Price"),
         show="headings",
         style="Custom.Treeview"
     )
