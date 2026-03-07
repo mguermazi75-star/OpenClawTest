@@ -141,17 +141,30 @@ def create_daily_entry_view(parent, on_save_callback=None):
         egg_price = float(egg_price_entry.get()) if egg_price_entry.get() else 0.0
         notes = notes_entry.get()
         
-        # Save production entry ONLY if there's actual production or mortality
+        # Save production entry - ADD to existing if same date exists
         if production > 0 or mortality > 0:
-            entry = DailyEntry(
-                date=date,
-                mortality=mortality,
-                production=production,
-                eggs_sold=eggs_sold,
-                egg_price=egg_price,
-                notes=notes
-            )
-            DailyController.save_entry(entry)
+            existing = DailyController.get_entry_by_date(date)
+            if existing:
+                # Update existing entry with added values
+                existing.mortality += mortality
+                existing.production += production
+                existing.eggs_sold += eggs_sold
+                if egg_price > 0:
+                    existing.egg_price = egg_price
+                if notes:
+                    existing.notes = notes
+                DailyController.update_entry(existing)
+            else:
+                # Create new entry
+                entry = DailyEntry(
+                    date=date,
+                    mortality=mortality,
+                    production=production,
+                    eggs_sold=eggs_sold,
+                    egg_price=egg_price,
+                    notes=notes
+                )
+                DailyController.save_entry(entry)
         
         # Save expense if amount entered
         expense_amount = expense_amount_entry.get()

@@ -149,6 +149,50 @@ class DailyController:
         return True
     
     @staticmethod
+    def get_entry_by_date(date: str) -> Optional[DailyEntry]:
+        """Get entry by date"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, date, mortality, production, eggs_sold, egg_price, notes
+            FROM daily_entries
+            WHERE date = ?
+            LIMIT 1
+        ''', (date,))
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return DailyEntry(
+                id=row[0],
+                date=row[1],
+                mortality=row[2],
+                production=row[3],
+                eggs_sold=row[4] or 0,
+                egg_price=row[5] or 0.0,
+                notes=row[6] or ""
+            )
+        return None
+    
+    @staticmethod
+    def update_entry(entry: DailyEntry) -> bool:
+        """Update an existing entry"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            UPDATE daily_entries 
+            SET mortality = ?, production = ?, eggs_sold = ?, egg_price = ?, notes = ?
+            WHERE date = ?
+        ''', (entry.mortality, entry.production, entry.eggs_sold, entry.egg_price, entry.notes, entry.date))
+        
+        conn.commit()
+        conn.close()
+        return True
+    
+    @staticmethod
     def delete_entry_by_date(date: str) -> bool:
         """Delete an entry by date"""
         conn = get_connection()
