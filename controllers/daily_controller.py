@@ -147,3 +147,13 @@ class DailyController:
         conn.commit()
         conn.close()
         return True
+    
+    @staticmethod
+    def delete_entry_by_date(date: str) -> bool:
+        """Delete an entry by date"""
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM daily_entries WHERE date = ?', (date,))
+        conn.commit()
+        conn.close()
+        return True

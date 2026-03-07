@@ -104,6 +104,15 @@ def create_daily_entry_view(parent, on_save_callback=None):
     right_frame = ttk.LabelFrame(main_container, text="Entry History", padding=10)
     right_frame.pack(side=RIGHT, fill=BOTH, expand=True, padx=(10, 0))
     
+    # Buttons frame
+    btn_frame = ttk.Frame(right_frame)
+    btn_frame.pack(fill=X, pady=(0, 5))
+    
+    ttk.Button(btn_frame, text="Delete", bootstyle="danger", 
+               command=lambda: delete_entry()).pack(side=RIGHT)
+    ttk.Button(btn_frame, text="Refresh", bootstyle="secondary",
+               command=lambda: refresh_history()).pack(side=RIGHT, padx=(0, 5))
+    
     # Treeview
     columns = ("Date", "Mortality", "Produced", "Sold", "Rem.", "Price", "Expense", "Notes")
     tree = ttk.Treeview(right_frame, columns=columns, show="headings", height=15)
@@ -159,6 +168,27 @@ def create_daily_entry_view(parent, on_save_callback=None):
         expense_desc_entry.delete(0, END)
         
         # Refresh history
+        refresh_history()
+        
+        # Trigger dashboard refresh if callback is set
+        if _refresh_callback:
+            _refresh_callback()
+    
+    def delete_entry():
+        """Delete selected entry"""
+        selected = tree.selection()
+        if not selected:
+            message_label.config(text="Select an entry to delete", bootstyle="warning")
+            return
+        
+        # Get the entry date from selected row
+        item = tree.item(selected[0])
+        date = item['values'][0]
+        
+        # Delete from database
+        DailyController.delete_entry_by_date(date)
+        
+        message_label.config(text="Entry deleted!", bootstyle="success")
         refresh_history()
         
         # Trigger dashboard refresh if callback is set
