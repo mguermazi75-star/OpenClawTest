@@ -44,13 +44,17 @@ def create_dashboard_view(parent):
     today_production = latest_entry.production if latest_entry else 0
     today_egg_price = latest_entry.egg_price if latest_entry else 0.0
     
+    # Calculate remaining chickens (initial 30000 - cumulative mortality)
+    total_mortality = sum(e.mortality for e in DailyController.get_entries_for_week(365))
+    remaining_chickens = 30000 - total_mortality
+    
     # Stats cards - Single row with smaller cards
     stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(15, 8, 15, 10))
     stats_row.pack(fill=X)
     
     create_compact_card(
-        stats_row, "Stock", str(current_stock), 
-        COLORS['stock'], "chickens", 0
+        stats_row, "Chickens", str(remaining_chickens), 
+        COLORS['stock'], "remaining", 0
     )
     create_compact_card(
         stats_row, "Mortality", str(today_mortality), 
@@ -237,7 +241,7 @@ def create_activity_table(parent):
     # Configure columns
     columns = [
         ("Date", 120, "w"),
-        ("Stock", 100, "e"),
+        ("Remaining", 100, "e"),
         ("Mortality", 100, "e"),
         ("Production", 100, "e"),
         ("Egg Price", 100, "e")
@@ -251,11 +255,13 @@ def create_activity_table(parent):
     
     # Load data
     entries = DailyController.get_entries_for_week(10)
+    cumulative = 30000
     for i, entry in enumerate(entries):
+        cumulative -= entry.mortality
         tags = ('odd',) if i % 2 else ('even',)
         tree.insert("", END, values=(
             entry.date,
-            entry.stock,
+            cumulative,
             entry.mortality,
             entry.production,
             f"€{entry.egg_price:.2f}"
