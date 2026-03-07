@@ -29,11 +29,16 @@ def init_db():
         )
     ''')
     
-    # Add eggs_sold column if it doesn't exist (for existing databases)
+    # Add missing columns if they don't exist (for existing databases)
     try:
-        cursor.execute('ALTER TABLE daily_entries ADD COLUMN eggs_sold INTEGER DEFAULT 0')
+        cursor.execute('SELECT eggs_sold FROM daily_entries LIMIT 1')
     except sqlite3.OperationalError:
-        pass  # Column already exists
+        cursor.execute('ALTER TABLE daily_entries ADD COLUMN eggs_sold INTEGER DEFAULT 0')
+    
+    try:
+        cursor.execute('SELECT egg_price FROM daily_entries LIMIT 1')
+    except sqlite3.OperationalError:
+        cursor.execute('ALTER TABLE daily_entries ADD COLUMN egg_price REAL DEFAULT 0')
     
     # Expenses table
     cursor.execute('''
