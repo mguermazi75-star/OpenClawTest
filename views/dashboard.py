@@ -5,6 +5,7 @@ Improved design with modern cards and charts
 
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -127,8 +128,8 @@ def create_modern_card(parent, title: str, value: str, color: str, subtitle: str
     card.grid(row=0, column=column, padx=10, sticky="ew")
     parent.grid_columnconfigure(column, weight=1)
     
-    # Color accent bar at top
-    accent = ttk.Frame(card, height=4, background=color)
+    # Color accent bar at top (using tkinter Frame for background color)
+    accent = tk.Frame(card, height=4, bg=color)
     accent.pack(fill=X)
     
     # Content
