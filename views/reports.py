@@ -60,8 +60,8 @@ def create_reports_view(parent):
             
             for entry in data['entries']:
                 report_text.insert(END, 
-                    f"Date: {entry['date']} | Stock: {entry['stock']} | "
-                    f"Mortality: {entry['mortality']} | Production: {entry['production']}\n")
+                    f"Date: {entry['date']} | Mortality: {entry['mortality']} | "
+                    f"Produced: {entry['production']} | Sold: {entry['eggs_sold']}\n")
             
             report_text.insert(END, f"\n📈 Total Production (7 days): {data['total_production']}\n")
             report_text.insert(END, f"☠️ Total Mortality (7 days): {data['total_mortality']}\n")
@@ -78,10 +78,10 @@ def create_reports_view(parent):
             report_text.insert(END, "📅 MONTHLY SUMMARY REPORT\n")
             report_text.insert(END, "=" * 40 + "\n\n")
             report_text.insert(END, f"Month: {data['month']}\n\n")
-            report_text.insert(END, f"🥚 Total Production: {data['total_production']}\n")
-            report_text.insert(END, f"☠️ Total Mortality: {data['total_mortality']}\n")
-            report_text.insert(END, f"🐔 Average Stock: {data['avg_stock']:.0f}\n")
-            report_text.insert(END, f"📝 Days Recorded: {data['days_recorded']}\n")
+            report_text.insert(END, f"Total Eggs Produced: {data['total_production']}\n")
+            report_text.insert(END, f"Total Mortality: {data['total_mortality']}\n")
+            report_text.insert(END, f"Total Eggs Sold: {data['total_sold']}\n")
+            report_text.insert(END, f"Days Recorded: {data['days_recorded']}\n")
             
         elif report_type == "expense":
             data = ReportController.generate_expense_report()
