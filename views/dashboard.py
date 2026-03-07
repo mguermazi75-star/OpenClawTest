@@ -40,7 +40,7 @@ def create_dashboard_view(parent):
     create_stat_card(stats_frame, "💸 Monthly Expenses", f"€{monthly_expenses:.2f}", "warning", 4)
     
     # Charts section
-    charts_label = ttk.Label(frame, text="📊 Production & Mortality Overview", font=("Helvetica", 14, "bold"))
+    charts_label = ttk.Label(frame, text="Production & Mortality Overview", font=("Helvetica", 14, "bold"))
     charts_label.pack(anchor=W, padx=20, pady=(20, 5))
     
     create_charts_frame(frame)
@@ -111,7 +111,7 @@ def create_charts_frame(parent):
     # Production line chart
     ax1 = fig.add_subplot(1, 3, 1)
     ax1.plot(dates, production, marker='o', linewidth=2, color='#28a745', label='Production')
-    ax1.set_title('🥚 Egg Production', fontsize=12, fontweight='bold')
+    ax1.set_title('Egg Production', fontsize=12, fontweight='bold')
     ax1.set_xlabel('Date')
     ax1.set_ylabel('Eggs')
     ax1.tick_params(axis='x', rotation=45)
@@ -121,7 +121,7 @@ def create_charts_frame(parent):
     # Mortality bar chart
     ax2 = fig.add_subplot(1, 3, 2)
     ax2.bar(dates, mortality, color='#dc3545', alpha=0.7, label='Mortality')
-    ax2.set_title('☠️ Mortality', fontsize=12, fontweight='bold')
+    ax2.set_title('Mortality', fontsize=12, fontweight='bold')
     ax2.set_xlabel('Date')
     ax2.set_ylabel('Count')
     ax2.tick_params(axis='x', rotation=45)
@@ -130,10 +130,10 @@ def create_charts_frame(parent):
     
     # Egg Price line chart
     ax3 = fig.add_subplot(1, 3, 3)
-    ax3.plot(dates, egg_prices, marker='s', linewidth=2, color='#17a2b8', label='Egg Price (€)')
-    ax3.set_title('💶 Egg Unit Price', fontsize=12, fontweight='bold')
+    ax3.plot(dates, egg_prices, marker='s', linewidth=2, color='#17a2b8', label='Egg Price (EUR)')
+    ax3.set_title('Egg Unit Price', fontsize=12, fontweight='bold')
     ax3.set_xlabel('Date')
-    ax3.set_ylabel('Price (€)')
+    ax3.set_ylabel('Price (EUR)')
     ax3.tick_params(axis='x', rotation=45)
     ax3.grid(True, alpha=0.3)
     ax3.legend()
