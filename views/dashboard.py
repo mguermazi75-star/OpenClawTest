@@ -64,37 +64,30 @@ def create_dashboard_view(parent):
     today_production = latest_entry.production if latest_entry else 0
     today_egg_price = latest_entry.egg_price if latest_entry else 0.0
     
-    # Stats cards - Row 1
-    stats_row1 = ttk.Frame(frame, style='Custom.TFrame', padding=(20, 0, 20, 10))
-    stats_row1.pack(fill=X)
+    # Stats cards - Single row with smaller cards
+    stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(20, 10, 20, 15))
+    stats_row.pack(fill=X)
     
-    create_modern_card(
-        stats_row1, "Current Stock", str(current_stock), 
-        COLORS['stock'], "Chickens", 0
+    create_compact_card(
+        stats_row, "Stock", str(current_stock), 
+        COLORS['stock'], "chickens", 0
     )
-    create_modern_card(
-        stats_row1, "Today's Mortality", str(today_mortality), 
-        COLORS['mortality'], "Deaths", 1
+    create_compact_card(
+        stats_row, "Mortality", str(today_mortality), 
+        COLORS['mortality'], "today", 1
     )
-    create_modern_card(
-        stats_row1, "Today's Production", str(today_production), 
-        COLORS['production'], "Eggs", 2
+    create_compact_card(
+        stats_row, "Production", str(today_production), 
+        COLORS['production'], "eggs", 2
     )
-    
-    # Stats cards - Row 2
-    stats_row2 = ttk.Frame(frame, style='Custom.TFrame', padding=(20, 0, 20, 20))
-    stats_row2.pack(fill=X)
-    
-    create_modern_card(
-        stats_row2, "Egg Unit Price", f"€{today_egg_price:.2f}", 
-        COLORS['egg_price'], "Per egg", 0
+    create_compact_card(
+        stats_row, "Egg Price", f"€{today_egg_price:.2f}", 
+        COLORS['egg_price'], "per egg", 3
     )
-    create_modern_card(
-        stats_row2, "Monthly Expenses", f"€{monthly_expenses:.2f}", 
-        COLORS['expenses'], "This month", 1
+    create_compact_card(
+        stats_row, "Expenses", f"€{monthly_expenses:.2f}", 
+        COLORS['expenses'], "this month", 4
     )
-    # Empty space for alignment
-    ttk.Frame(stats_row2, width=200).grid(row=0, column=2, padx=10)
     
     # Charts section
     charts_container = ttk.LabelFrame(
@@ -121,26 +114,25 @@ def create_dashboard_view(parent):
     return frame
 
 
-def create_modern_card(parent, title: str, value: str, color: str, subtitle: str, column: int):
-    """Create a modern styled stat card"""
-    # Card container with border/shadow effect
-    card = ttk.Frame(parent, style='Card.TFrame', borderwidth=1, relief=SOLID)
-    card.grid(row=0, column=column, padx=10, sticky="ew")
+def create_compact_card(parent, title: str, value: str, color: str, subtitle: str, column: int):
+    """Create a compact stat card"""
+    card = ttk.Frame(parent, style='Card.TFrame')
+    card.grid(row=0, column=column, padx=8, sticky="ew")
     parent.grid_columnconfigure(column, weight=1)
     
-    # Color accent bar at top (using tkinter Frame for background color)
-    accent = tk.Frame(card, height=4, bg=color)
+    # Color accent bar
+    accent = tk.Frame(card, height=3, bg=color)
     accent.pack(fill=X)
     
     # Content
-    content = ttk.Frame(card, padding=15)
+    content = ttk.Frame(card, padding=10)
     content.pack(fill=BOTH, expand=True)
     
     # Title
     ttk.Label(
         content,
         text=title,
-        font=("Helvetica", 11),
+        font=("Helvetica", 9),
         foreground=COLORS['text_light']
     ).pack(anchor=W)
     
@@ -148,15 +140,15 @@ def create_modern_card(parent, title: str, value: str, color: str, subtitle: str
     ttk.Label(
         content,
         text=value,
-        font=("Helvetica", 28, "bold"),
+        font=("Helvetica", 18, "bold"),
         foreground=color
-    ).pack(anchor=W, pady=5)
+    ).pack(anchor=W, pady=2)
     
     # Subtitle
     ttk.Label(
         content,
         text=subtitle,
-        font=("Helvetica", 9),
+        font=("Helvetica", 8),
         foreground=COLORS['text_light']
     ).pack(anchor=W)
     
@@ -184,7 +176,7 @@ def create_charts_frame(parent):
     egg_prices = [entry.egg_price for entry in entries]
     
     # Create figure with custom styling
-    fig = Figure(figsize=(14, 4.5), dpi=100)
+    fig = Figure(figsize=(12, 3.5), dpi=100)
     fig.patch.set_facecolor('#FFFFFF')
     
     # Production chart (line with fill)
