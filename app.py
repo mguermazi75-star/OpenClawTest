@@ -87,11 +87,11 @@ class PoultryFarmApp(ttk.Window):
         self.nb.pack(fill=BOTH, expand=True, padx=10, pady=10)
         
         # Create tabs
-        self.dashboard_tab = ttk.Frame(notebook)
-        self.daily_tab = ttk.Frame(notebook)
-        self.expenses_tab = ttk.Frame(notebook)
-        self.billing_tab = ttk.Frame(notebook)
-        self.reports_tab = ttk.Frame(notebook)
+        self.dashboard_tab = ttk.Frame(self.nb)
+        self.daily_tab = ttk.Frame(self.nb)
+        self.expenses_tab = ttk.Frame(self.nb)
+        self.billing_tab = ttk.Frame(self.nb)
+        self.reports_tab = ttk.Frame(self.nb)
         
         self.nb.add(self.dashboard_tab, text="📊 Dashboard")
         self.nb.add(self.daily_tab, text="📝 Daily Entry")
