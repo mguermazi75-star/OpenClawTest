@@ -1,6 +1,6 @@
 """
 Dashboard view - Main dashboard with KPIs and Charts
-Improved design with modern cards and charts
+Professional, clean design
 """
 
 import ttkbootstrap as ttk
@@ -12,28 +12,41 @@ from matplotlib.figure import Figure
 from controllers import DailyController, ExpenseController
 
 
-# Color scheme
+# Professional color scheme
 COLORS = {
-    'stock': '#4F46E5',      # Indigo
-    'mortality': '#DC2626',  # Red
-    'production': '#16A34A', # Green
-    'egg_price': '#0891B2',  # Cyan
-    'expenses': '#D97706',  # Amber
-    'bg': '#F8FAFC',         # Light gray background
-    'card_bg': '#FFFFFF',    # White card background
-    'text': '#1E293B',       # Dark text
-    'text_light': '#64748B'  # Light text
+    'primary': '#2563EB',     # Blue
+    'success': '#16A34A',    # Green  
+    'danger': '#DC2626',      # Red
+    'warning': '#D97706',     # Amber
+    'info': '#0891B2',        # Cyan
+    'dark': '#1E293B',        # Dark slate
+    'light': '#F1F5F9',       # Light gray
+    'border': '#E2E8F0',      # Border gray
 }
 
 
 def create_dashboard_view(parent):
     """Create and return dashboard frame"""
-    frame = ttk.Frame(parent, style='Custom.TFrame')
+    frame = ttk.Frame(parent, style='TFrame')
     frame.pack(fill=BOTH, expand=True)
     
-    # Configure styles
-    style = ttk.Style()
-    style.configure('Custom.TFrame', background=COLORS['bg'])
+    # Header
+    header = ttk.Frame(frame)
+    header.pack(fill=X, padx=25, pady=(20, 15))
+    
+    ttk.Label(
+        header,
+        text="Dashboard",
+        font=("Segoe UI", 22, "bold"),
+        foreground=COLORS['dark']
+    ).pack(side=LEFT)
+    
+    ttk.Label(
+        header,
+        text="Farm Overview",
+        font=("Segoe UI", 11),
+        foreground="#64748B"
+    ).pack(side=LEFT, padx=15)
     
     # Get data
     latest_entry = DailyController.get_latest_entry()
@@ -49,222 +62,151 @@ def create_dashboard_view(parent):
     total_mortality = sum(e.mortality for e in DailyController.get_entries_for_week(365))
     remaining_chickens = 30000 - total_mortality
     
-    # Stats cards - Single row with smaller cards
-    stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(15, 8, 15, 10))
-    stats_row.pack(fill=X)
+    # Stats cards row
+    stats_row = ttk.Frame(frame)
+    stats_row.pack(fill=X, padx=20, pady=(0, 15))
     
-    # Configure grid columns for 7 cards
     for i in range(7):
         stats_row.grid_columnconfigure(i, weight=1)
     
-    create_compact_card(
-        stats_row, "Chickens", str(remaining_chickens), 
-        COLORS['stock'], "remaining", 0
-    )
-    create_compact_card(
-        stats_row, "Mortality", str(today_mortality), 
-        COLORS['mortality'], "today", 1
-    )
-    create_compact_card(
-        stats_row, "Produced", str(today_production), 
-        COLORS['production'], "eggs", 2
-    )
-    create_compact_card(
-        stats_row, "Sold", str(today_eggs_sold), 
-        COLORS['egg_price'], "eggs", 3
-    )
-    create_compact_card(
-        stats_row, "Remaining", str(today_remaining), 
-        COLORS['production'], "unsold", 4
-    )
-    create_compact_card(
-        stats_row, "Price", f"€{today_egg_price:.2f}", 
-        COLORS['egg_price'], "per egg", 5
-    )
-    create_compact_card(
-        stats_row, "Expenses", f"€{monthly_expenses:.2f}", 
-        COLORS['expenses'], "this month", 6
-    )
+    create_card(stats_row, "Chickens", str(remaining_chickens), COLORS['primary'], 0)
+    create_card(stats_row, "Mortality", str(today_mortality), COLORS['danger'], 1)
+    create_card(stats_row, "Produced", str(today_production), COLORS['success'], 2)
+    create_card(stats_row, "Sold", str(today_eggs_sold), COLORS['info'], 3)
+    create_card(stats_row, "In Stock", str(today_remaining), COLORS['success'], 4)
+    create_card(stats_row, "Price", f"€{today_egg_price:.2f}", COLORS['warning'], 5)
+    create_card(stats_row, "Expenses", f"€{monthly_expenses:.0f}", COLORS['danger'], 6)
     
     # Charts section
-    charts_container = ttk.LabelFrame(
-        frame, 
-        text=" Performance Trends (Last 30 Days)",
-        padding=15,
-        style='Custom.TLabelframe'
-    )
-    charts_container.pack(fill=BOTH, expand=True, padx=20, pady=(0, 20))
+    charts_frame = ttk.LabelFrame(frame, text=" Performance Trends", padding=15)
+    charts_frame.pack(fill=BOTH, expand=True, padx=20, pady=(0, 15))
     
-    create_charts_frame(charts_container)
+    create_charts(charts_frame)
     
-    # Recent activity table
-    activity_container = ttk.LabelFrame(
-        frame,
-        text=" Recent Entries",
-        padding=15,
-        style='Custom.TLabelframe'
-    )
-    activity_container.pack(fill=BOTH, expand=True, padx=20, pady=(0, 20))
+    # Recent entries
+    table_frame = ttk.LabelFrame(frame, text=" Recent Entries", padding=15)
+    table_frame.pack(fill=BOTH, expand=True, padx=20, pady=(0, 20))
     
-    create_activity_table(activity_container)
+    create_table(table_frame)
     
     return frame
 
 
-def create_compact_card(parent, title: str, value: str, color: str, subtitle: str, column: int):
-    """Create a compact stat card"""
-    card = ttk.Frame(parent, style='Card.TFrame')
-    card.grid(row=0, column=column, padx=5, sticky="ew")
-    parent.grid_columnconfigure(column, weight=1)
+def create_card(parent, title: str, value: str, color: str, column: int):
+    """Create a clean stat card"""
+    card = ttk.Frame(parent, relief=FLAT, borderwidth=1, style='TFrame')
+    card.grid(row=0, column=column, padx=6, sticky="ew")
     
-    # Color accent bar
-    accent = tk.Frame(card, height=2, bg=color)
+    # Inner container with border
+    inner = ttk.Frame(card, relief=SOLID, borderwidth=1, style='TFrame')
+    inner.pack(fill=BOTH, expand=True, padx=1, pady=1)
+    
+    # Accent bar
+    accent = tk.Frame(inner, bg=color, height=3)
     accent.pack(fill=X)
     
     # Content
-    content = ttk.Frame(card, padding=6)
+    content = ttk.Frame(inner, padding=(12, 10))
     content.pack(fill=BOTH, expand=True)
     
-    # Title
     ttk.Label(
         content,
         text=title,
-        font=("Helvetica", 8),
-        foreground=COLORS['text_light']
+        font=("Segoe UI", 9),
+        foreground="#64748B"
     ).pack(anchor=W)
     
-    # Value
     ttk.Label(
         content,
         text=value,
-        font=("Helvetica", 14, "bold"),
+        font=("Segoe UI", 18, "bold"),
         foreground=color
-    ).pack(anchor=W, pady=1)
-    
-    # Subtitle
-    ttk.Label(
-        content,
-        text=subtitle,
-        font=("Helvetica", 7),
-        foreground=COLORS['text_light']
-    ).pack(anchor=W)
+    ).pack(anchor=W, pady=(4, 0))
     
     return card
 
 
-def create_charts_frame(parent):
-    """Create charts frame with production, mortality, and egg price charts"""
-    # Get data for charts
+def create_charts(parent):
+    """Create charts"""
     entries = DailyController.get_entries_for_week(30)
     entries.reverse()
     
     if not entries:
         ttk.Label(
             parent,
-            text="No data available yet. Add entries to see charts.",
-            font=("Helvetica", 12),
-            foreground=COLORS['text_light']
-        ).pack(pady=50)
+            text="No data yet. Add entries to see charts.",
+            font=("Segoe UI", 11),
+            foreground="#94A3B8"
+        ).pack(pady=40)
         return
     
-    dates = [entry.date for entry in entries]
+    dates = [entry.date[5:] for entry in entries]  # Show only MM-DD
     production = [entry.production for entry in entries]
     mortality = [entry.mortality for entry in entries]
-    egg_prices = [entry.egg_price for entry in entries]
     
-    # Create figure with custom styling
-    fig = Figure(figsize=(12, 4), dpi=100)
-    fig.patch.set_facecolor('#FFFFFF')
+    fig = Figure(figsize=(12, 3), dpi=100)
+    fig.patch.set_facecolor('white')
     
-    # Production chart (line with fill)
-    ax1 = fig.add_subplot(1, 3, 1)
-    ax1.fill_between(range(len(dates)), production, alpha=0.3, color=COLORS['production'])
-    ax1.plot(range(len(dates)), production, marker='o', linewidth=2.5, 
-             color=COLORS['production'], markersize=4, label='Production')
-    ax1.set_title('Egg Production', fontsize=13, fontweight='bold', pad=10)
-    ax1.set_ylabel('Eggs', fontsize=10)
+    # Production
+    ax1 = fig.add_subplot(1, 2, 1)
+    ax1.fill_between(range(len(dates)), production, alpha=0.3, color=COLORS['success'])
+    ax1.plot(range(len(dates)), production, marker='o', linewidth=2, 
+             color=COLORS['success'], markersize=3)
+    ax1.set_title('Egg Production', fontsize=11, fontweight='bold', pad=8)
+    ax1.set_ylabel('Eggs', fontsize=9)
     ax1.set_xticks(range(0, len(dates), max(1, len(dates)//5)))
     ax1.set_xticklabels([dates[i] for i in range(0, len(dates), max(1, len(dates)//5))], 
-                        rotation=45, fontsize=8)
-    ax1.grid(True, alpha=0.2, linestyle='--')
+                        rotation=45, fontsize=7)
     ax1.spines['top'].set_visible(False)
     ax1.spines['right'].set_visible(False)
-    ax1.set_facecolor('#FFFFFF')
+    ax1.grid(True, alpha=0.15)
     
-    # Mortality chart (bar)
-    ax2 = fig.add_subplot(1, 3, 2)
-    ax2.bar(range(len(dates)), mortality, color=COLORS['mortality'], alpha=0.7, width=0.6)
-    ax2.set_title('Mortality', fontsize=13, fontweight='bold', pad=10)
-    ax2.set_ylabel('Count', fontsize=10)
+    # Mortality
+    ax2 = fig.add_subplot(1, 2, 2)
+    ax2.bar(range(len(dates)), mortality, color=COLORS['danger'], alpha=0.7, width=0.5)
+    ax2.set_title('Mortality', fontsize=11, fontweight='bold', pad=8)
+    ax2.set_ylabel('Count', fontsize=9)
     ax2.set_xticks(range(0, len(dates), max(1, len(dates)//5)))
     ax2.set_xticklabels([dates[i] for i in range(0, len(dates), max(1, len(dates)//5))], 
-                        rotation=45, fontsize=8)
-    ax2.grid(True, alpha=0.2, linestyle='--', axis='y')
+                        rotation=45, fontsize=7)
     ax2.spines['top'].set_visible(False)
     ax2.spines['right'].set_visible(False)
-    ax2.set_facecolor('#FFFFFF')
+    ax2.grid(True, alpha=0.15, axis='y')
     
-    # Egg Price chart (line)
-    ax3 = fig.add_subplot(1, 3, 3)
-    ax3.plot(range(len(dates)), egg_prices, marker='s', linewidth=2.5, 
-             color=COLORS['egg_price'], markersize=4, label='Price')
-    ax3.fill_between(range(len(dates)), egg_prices, alpha=0.2, color=COLORS['egg_price'])
-    ax3.set_title('Egg Unit Price', fontsize=13, fontweight='bold', pad=10)
-    ax3.set_ylabel('EUR', fontsize=10)
-    ax3.set_xticks(range(0, len(dates), max(1, len(dates)//5)))
-    ax3.set_xticklabels([dates[i] for i in range(0, len(dates), max(1, len(dates)//5))], 
-                        rotation=45, fontsize=8)
-    ax3.grid(True, alpha=0.2, linestyle='--')
-    ax3.spines['top'].set_visible(False)
-    ax3.spines['right'].set_visible(False)
-    ax3.set_facecolor('#FFFFFF')
+    fig.tight_layout(pad=1.5)
     
-    fig.tight_layout(pad=2.0)
-    
-    # Embed in Tkinter
     canvas = FigureCanvasTkAgg(fig, master=parent)
     canvas.draw()
     canvas.get_tk_widget().pack(fill=BOTH, expand=True)
-    
-    return parent
 
 
-def create_activity_table(parent):
-    """Create styled activity table"""
-    # Style the treeview
+def create_table(parent):
+    """Create data table"""
+    # Style
     style = ttk.Style()
-    style.configure(
-        "Treeview",
-        font=("Helvetica", 10),
-        rowheight=30
-    )
-    style.configure(
-        "Treeview.Heading",
-        font=("Helvetica", 11, "bold")
-    )
+    style.configure("Treeview", font=("Segoe UI", 9), rowheight=28)
+    style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
     
-    # Treeview
     tree = ttk.Treeview(
         parent,
-        columns=("Date", "Chickens", "Mortality", "Produced", "Sold", "Remaining", "Price"),
+        columns=("Date", "Chickens", "Mortality", "Produced", "Sold", "In Stock", "Price"),
         show="headings",
-        style="Custom.Treeview"
+        style="Treeview"
     )
     
-    # Configure columns
-    columns = [
-        ("Date", 100, "w"),
-        ("Chickens", 80, "e"),
-        ("Mortality", 80, "e"),
-        ("Produced", 80, "e"),
-        ("Sold", 80, "e"),
-        ("Remaining", 80, "e"),
-        ("Price", 80, "e")
+    cols = [
+        ("Date", 90, "center"),
+        ("Chickens", 75, "center"),
+        ("Mortality", 70, "center"),
+        ("Produced", 70, "center"),
+        ("Sold", 60, "center"),
+        ("In Stock", 70, "center"),
+        ("Price", 70, "center")
     ]
     
-    for col, width, anchor in columns:
+    for col, w, a in cols:
         tree.heading(col, text=col)
-        tree.column(col, width=width, anchor=anchor, minwidth=80)
+        tree.column(col, width=w, anchor=a, minwidth=50)
     
     tree.pack(fill=BOTH, expand=True)
     
@@ -273,21 +215,16 @@ def create_activity_table(parent):
     cumulative = 30000
     for i, entry in enumerate(entries):
         cumulative -= entry.mortality
-        eggs_remaining = entry.production - entry.eggs_sold
-        tags = ('odd',) if i % 2 else ('even',)
+        eggs_in_stock = entry.production - entry.eggs_sold
         tree.insert("", END, values=(
             entry.date,
             cumulative,
             entry.mortality,
             entry.production,
             entry.eggs_sold,
-            eggs_remaining,
-            f"€{entry.egg_price:.2f}"
-        ), tags=tags)
+            eggs_in_stock,
+            f"€{entry.egg_price:.2f}" if entry.egg_price > 0 else "-"
+        ), tags=('even',) if i % 2 else ('odd',))
     
-    # Configure row tags for striping
-    style.configure("Treeview", background="#FFFFFF")
-    style.configure("Treeview", fieldbackground="#FFFFFF")
-    style.map("Treeview", background=[('selected', COLORS['stock'])])
-    
-    return parent
+    # Alternating row colors
+    style.map("Treeview", background=[('selected', COLORS['primary'])])

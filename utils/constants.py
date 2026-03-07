@@ -19,10 +19,10 @@ EXPENSE_CATEGORIES = [
 ]
 
 # App settings
-APP_TITLE = "🐔 Poultry Farm Management"
-APP_THEME = "cosmo"
-APP_SIZE = "1200x700"
-APP_MIN_SIZE = (1000, 600)
+APP_TITLE = "Poultry Farm Management"
+APP_THEME = "litera"  # More professional, clean theme
+APP_SIZE = "1280x800"
+APP_MIN_SIZE = (1100, 700)
 
 # Date format
 DATE_FORMAT = "%Y-%m-%d"
