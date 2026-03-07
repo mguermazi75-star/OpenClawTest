@@ -35,18 +35,6 @@ def create_dashboard_view(parent):
     style = ttk.Style()
     style.configure('Custom.TFrame', background=COLORS['bg'])
     
-    # Header
-    header_frame = ttk.Frame(frame, style='Custom.TFrame', padding=15)
-    header_frame.pack(fill=X)
-    
-    ttk.Label(
-        header_frame,
-        text="Poultry Farm Dashboard",
-        font=("Helvetica", 18, "bold"),
-        foreground=COLORS['text'],
-        style='Custom.TLabel'
-    ).pack(side=LEFT)
-    
     # Get data
     latest_entry = DailyController.get_latest_entry()
     monthly_expenses = ExpenseController.get_monthly_expenses()
