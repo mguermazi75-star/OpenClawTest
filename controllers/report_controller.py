@@ -17,7 +17,7 @@ class ReportController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT date, stock, mortality, production
+            SELECT date, mortality, production, eggs_sold, egg_price
             FROM daily_entries
             ORDER BY date DESC
             LIMIT 7
@@ -32,9 +32,10 @@ class ReportController:
         entries = [
             {
                 'date': row[0],
-                'stock': row[1],
-                'mortality': row[2],
-                'production': row[3]
+                'mortality': row[1],
+                'production': row[2],
+                'eggs_sold': row[3] or 0,
+                'egg_price': row[4] or 0.0
             }
             for row in rows
         ]
@@ -62,7 +63,7 @@ class ReportController:
             SELECT 
                 COALESCE(SUM(production), 0),
                 COALESCE(SUM(mortality), 0),
-                COALESCE(AVG(stock), 0),
+                COALESCE(SUM(eggs_sold), 0),
                 COUNT(*)
             FROM daily_entries 
             WHERE date LIKE '{month}%'
@@ -79,7 +80,7 @@ class ReportController:
             'month': month,
             'total_production': row[0],
             'total_mortality': row[1],
-            'avg_stock': round(row[2], 0),
+            'total_sold': row[2],
             'days_recorded': row[3]
         }
     
@@ -123,14 +124,14 @@ class ReportController:
         if month is None:
             month = datetime.now().strftime("%Y-%m")
         
-        # Get revenue (from invoices)
         conn = get_connection()
         cursor = conn.cursor()
         
+        # Get revenue from eggs sold
         cursor.execute(f'''
-            SELECT COALESCE(SUM(total_amount), 0)
-            FROM invoices
-            WHERE date LIKE '{month}%' AND status = 'paid'
+            SELECT COALESCE(SUM(eggs_sold * egg_price), 0)
+            FROM daily_entries
+            WHERE date LIKE '{month}%'
         ''')
         revenue = cursor.fetchone()[0]
         
@@ -161,18 +162,26 @@ class ReportController:
         conn = get_connection()
         cursor = conn.cursor()
         
+        # Get total mortality and initial flock (30000 - cumulative mortality)
         cursor.execute(f'''
-            SELECT COALESCE(SUM(mortality), 0), COALESCE(SUM(stock), 0)
+            SELECT COALESCE(SUM(mortality), 0)
             FROM daily_entries
             ORDER BY date DESC
             LIMIT {days}
         ''')
+        total_mortality = cursor.fetchone()[0] or 0
         
-        row = cursor.fetchone()
+        # Initial flock minus cumulative mortality
+        cursor.execute('''
+            SELECT COALESCE(SUM(mortality), 0) FROM daily_entries
+        ''')
+        all_mortality = cursor.fetchone()[0] or 0
+        current_stock = 30000 - all_mortality
+        
         conn.close()
         
-        if row[1] > 0:
-            return (row[0] / row[1]) * 100
+        if current_stock > 0:
+            return (total_mortality / 30000) * 100
         return 0.0
     
     @staticmethod
