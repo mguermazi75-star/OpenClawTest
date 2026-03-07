@@ -24,65 +24,98 @@ def create_daily_entry_view(parent, on_save_callback=None):
     frame = ttk.Frame(parent)
     frame.pack(fill=BOTH, expand=True)
     
+    # Main container - two columns
+    main_container = ttk.Frame(frame)
+    main_container.pack(fill=BOTH, expand=True, padx=20, pady=20)
+    
+    # Left side - Forms
+    left_frame = ttk.Frame(main_container)
+    left_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 10))
+    
     # ===== PRODUCTION SECTION =====
-    prod_frame = ttk.LabelFrame(frame, text="Daily Production", padding=15)
-    prod_frame.pack(fill=X, padx=20, pady=(20, 10))
+    prod_frame = ttk.LabelFrame(left_frame, text="Daily Production", padding=15)
+    prod_frame.pack(fill=X, pady=(0, 10))
     
     # Date
-    ttk.Label(prod_frame, text="Date:").grid(row=0, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Date:").grid(row=0, column=0, sticky=W, pady=5)
     date_entry = DateEntry(prod_frame)
-    date_entry.grid(row=0, column=1, padx=5, sticky=W)
+    date_entry.grid(row=0, column=1, padx=5, sticky=W, pady=5)
     
     # Mortality
-    ttk.Label(prod_frame, text="Mortality:").grid(row=1, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Mortality:").grid(row=1, column=0, sticky=W, pady=5)
     mortality_entry = ttk.Entry(prod_frame, width=20)
-    mortality_entry.grid(row=1, column=1, padx=5, sticky=W)
+    mortality_entry.grid(row=1, column=1, padx=5, sticky=W, pady=5)
     
     # Eggs Produced
-    ttk.Label(prod_frame, text="Eggs Produced:").grid(row=2, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Eggs Produced:").grid(row=2, column=0, sticky=W, pady=5)
     production_entry = ttk.Entry(prod_frame, width=20)
-    production_entry.grid(row=2, column=1, padx=5, sticky=W)
+    production_entry.grid(row=2, column=1, padx=5, sticky=W, pady=5)
     
     # Eggs Sold
-    ttk.Label(prod_frame, text="Eggs Sold:").grid(row=3, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Eggs Sold:").grid(row=3, column=0, sticky=W, pady=5)
     eggs_sold_entry = ttk.Entry(prod_frame, width=20)
-    eggs_sold_entry.grid(row=3, column=1, padx=5, sticky=W)
+    eggs_sold_entry.grid(row=3, column=1, padx=5, sticky=W, pady=5)
     
     # Egg Price
-    ttk.Label(prod_frame, text="Egg Price (EUR):").grid(row=4, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Egg Price (EUR):").grid(row=4, column=0, sticky=W, pady=5)
     egg_price_entry = ttk.Entry(prod_frame, width=20)
-    egg_price_entry.grid(row=4, column=1, padx=5, sticky=W)
+    egg_price_entry.grid(row=4, column=1, padx=5, sticky=W, pady=5)
     
     # Notes
-    ttk.Label(prod_frame, text="Notes:").grid(row=5, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(prod_frame, text="Notes:").grid(row=5, column=0, sticky=W, pady=5)
     notes_entry = ttk.Entry(prod_frame, width=20)
-    notes_entry.grid(row=5, column=1, padx=5, sticky=W)
+    notes_entry.grid(row=5, column=1, padx=5, sticky=W, pady=5)
     
     # ===== EXPENSES SECTION =====
-    exp_frame = ttk.LabelFrame(frame, text="Daily Expenses", padding=15)
-    exp_frame.pack(fill=X, padx=20, pady=10)
+    exp_frame = ttk.LabelFrame(left_frame, text="Daily Expenses", padding=15)
+    exp_frame.pack(fill=X, pady=10)
     
     # Expense Category
-    ttk.Label(exp_frame, text="Category:").grid(row=0, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(exp_frame, text="Category:").grid(row=0, column=0, sticky=W, pady=5)
     category_combo = ttk.Combobox(exp_frame, values=[
         "Feed", "Medicine", "Utilities", "Labor", "Transport", "Maintenance", "Other"
     ], width=18)
-    category_combo.grid(row=0, column=1, padx=5, sticky=W)
+    category_combo.grid(row=0, column=1, padx=5, sticky=W, pady=5)
     category_combo.current(0)
     
     # Expense Amount
-    ttk.Label(exp_frame, text="Amount (EUR):").grid(row=1, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(exp_frame, text="Amount (EUR):").grid(row=1, column=0, sticky=W, pady=5)
     expense_amount_entry = ttk.Entry(exp_frame, width=20)
-    expense_amount_entry.grid(row=1, column=1, padx=5, sticky=W)
+    expense_amount_entry.grid(row=1, column=1, padx=5, sticky=W, pady=5)
     
     # Expense Description
-    ttk.Label(exp_frame, text="Description:").grid(row=2, column=0, sticky=W, pady=8, padx=5)
+    ttk.Label(exp_frame, text="Description:").grid(row=2, column=0, sticky=W, pady=5)
     expense_desc_entry = ttk.Entry(exp_frame, width=20)
-    expense_desc_entry.grid(row=2, column=1, padx=5, sticky=W)
+    expense_desc_entry.grid(row=2, column=1, padx=5, sticky=W, pady=5)
     
     # Message label
-    message_label = ttk.Label(frame, text="", bootstyle="success")
-    message_label.pack(pady=10)
+    message_label = ttk.Label(left_frame, text="", bootstyle="success")
+    message_label.pack(pady=5)
+    
+    # Save button
+    ttk.Button(
+        left_frame,
+        text="Save All",
+        bootstyle="success",
+        command=lambda: save_all()
+    ).pack(pady=5)
+    
+    # Right side - History
+    right_frame = ttk.LabelFrame(main_container, text="Entry History", padding=10)
+    right_frame.pack(side=RIGHT, fill=BOTH, expand=True, padx=(10, 0))
+    
+    # Treeview
+    columns = ("Date", "Mortality", "Produced", "Sold", "Rem.", "Price", "Expense", "Notes")
+    tree = ttk.Treeview(right_frame, columns=columns, show="headings", height=15)
+    for col in columns:
+        tree.heading(col, text=col)
+        tree.column(col, width=70)
+    tree.pack(fill=BOTH, expand=True)
+    
+    # Scrollbar
+    scrollbar = ttk.Scrollbar(right_frame, orient=VERTICAL, command=tree.yview)
+    tree.configure(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side=RIGHT, fill=Y)
     
     def save_all():
         """Save both production entry and expense"""
@@ -132,31 +165,6 @@ def create_daily_entry_view(parent, on_save_callback=None):
         if _refresh_callback:
             _refresh_callback()
     
-    # Save button
-    ttk.Button(
-        frame,
-        text="Save All",
-        bootstyle="success",
-        command=save_all
-    ).pack(pady=10)
-    
-    # ===== HISTORY SECTION =====
-    history_frame = ttk.LabelFrame(frame, text="Entry History", padding=10)
-    history_frame.pack(fill=BOTH, expand=True, padx=20, pady=(10, 20))
-    
-    # Treeview
-    columns = ("Date", "Mortality", "Produced", "Sold", "Remaining", "Price", "Expense", "Notes")
-    tree = ttk.Treeview(history_frame, columns=columns, show="headings", height=8)
-    for col in columns:
-        tree.heading(col, text=col)
-        tree.column(col, width=90)
-    tree.pack(fill=BOTH, expand=True)
-    
-    # Scrollbar
-    scrollbar = ttk.Scrollbar(history_frame, orient=VERTICAL, command=tree.yview)
-    tree.configure(yscrollcommand=scrollbar.set)
-    scrollbar.pack(side=RIGHT, fill=Y)
-    
     def refresh_history():
         """Refresh the history treeview"""
         for item in tree.get_children():
@@ -184,7 +192,7 @@ def create_daily_entry_view(parent, on_save_callback=None):
                 remaining,
                 f"€{entry.egg_price:.2f}",
                 f"€{exp_amount:.2f}" if exp_amount > 0 else "-",
-                entry.notes
+                entry.notes[:15] + "..." if len(entry.notes) > 15 else entry.notes
             ))
     
     # Initial load
