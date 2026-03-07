@@ -45,6 +45,10 @@ def create_dashboard_view(parent):
     today_egg_price = latest_entry.egg_price if latest_entry else 0.0
     today_remaining = today_production - today_eggs_sold
     
+    # Calculate remaining chickens (initial 30000 - cumulative mortality)
+    total_mortality = sum(e.mortality for e in DailyController.get_entries_for_week(365))
+    remaining_chickens = 30000 - total_mortality
+    
     # Stats cards - Single row with smaller cards
     stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(15, 8, 15, 10))
     stats_row.pack(fill=X)
