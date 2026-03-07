@@ -107,14 +107,12 @@ class PoultryFarmApp(ttk.Window):
         create_reports_view(self.reports_tab)
     
     def refresh_dashboard(self):
-        """Refresh the dashboard tab"""
+        """Refresh the dashboard tab without switching"""
         # Clear existing dashboard
         for widget in self.dashboard_tab.winfo_children():
             widget.destroy()
         # Rebuild dashboard
         create_dashboard_view(self.dashboard_tab)
-        # Switch to dashboard tab
-        self.nb.select(0)
 
 
 def main():
