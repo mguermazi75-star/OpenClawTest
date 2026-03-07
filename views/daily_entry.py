@@ -127,23 +127,31 @@ def create_daily_entry_view(parent, on_save_callback=None):
     scrollbar.pack(side=RIGHT, fill=Y)
     
     def save_all():
-        """Save both production entry and expense"""
+        """Save production entry (if data exists) and/or expense"""
         date = date_entry.entry.get()
         
         if not date:
             message_label.config(text="Please select a date!", bootstyle="danger")
             return
         
-        # Save production entry
-        entry = DailyEntry(
-            date=date,
-            mortality=int(mortality_entry.get()) if mortality_entry.get() else 0,
-            production=int(production_entry.get()) if production_entry.get() else 0,
-            eggs_sold=int(eggs_sold_entry.get()) if eggs_sold_entry.get() else 0,
-            egg_price=float(egg_price_entry.get()) if egg_price_entry.get() else 0.0,
-            notes=notes_entry.get()
-        )
-        DailyController.save_entry(entry)
+        # Get values
+        mortality = int(mortality_entry.get()) if mortality_entry.get() else 0
+        production = int(production_entry.get()) if production_entry.get() else 0
+        eggs_sold = int(eggs_sold_entry.get()) if eggs_sold_entry.get() else 0
+        egg_price = float(egg_price_entry.get()) if egg_price_entry.get() else 0.0
+        notes = notes_entry.get()
+        
+        # Save production entry ONLY if there's actual production or mortality
+        if production > 0 or mortality > 0:
+            entry = DailyEntry(
+                date=date,
+                mortality=mortality,
+                production=production,
+                eggs_sold=eggs_sold,
+                egg_price=egg_price,
+                notes=notes
+            )
+            DailyController.save_entry(entry)
         
         # Save expense if amount entered
         expense_amount = expense_amount_entry.get()
