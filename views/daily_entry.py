@@ -101,14 +101,6 @@ def create_daily_entry_view(parent, on_save_callback=None):
     msg_label = ttk.Label(left, text="", font=("Segoe UI", 9))
     msg_label.pack(pady=5)
     
-    ttk.Button(
-        left,
-        text="Save Entry",
-        bootstyle="primary",
-        style="primary.TButton",
-        command=save_all
-    ).pack(pady=5)
-    
     # Right - History
     right = ttk.LabelFrame(main, text=" Entry History ", padding=10)
     right.pack(side=RIGHT, fill=BOTH, expand=True)
@@ -145,6 +137,7 @@ def create_daily_entry_view(parent, on_save_callback=None):
     tree.configure(yscrollcommand=scrollbar.set)
     scrollbar.pack(side=RIGHT, fill=Y)
     
+    # Define functions first
     def save_all():
         date = date_entry.entry.get()
         if not date:
@@ -236,6 +229,15 @@ def create_daily_entry_view(parent, on_save_callback=None):
                 f"€{entry.egg_price:.2f}" if entry.egg_price > 0 else "-",
                 f"€{exp_amount:.0f}" if exp_amount > 0 else "-"
             ))
+    
+    # Now add the button after functions are defined
+    ttk.Button(
+        left,
+        text="Save Entry",
+        bootstyle="primary",
+        style="primary.TButton",
+        command=save_all
+    ).pack(pady=5)
     
     refresh_history()
     frame.refresh_history = refresh_history
