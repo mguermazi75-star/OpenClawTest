@@ -8,9 +8,19 @@ from ttkbootstrap.widgets import DateEntry
 from controllers import DailyController
 from models import DailyEntry
 
+# Global callback for dashboard refresh
+_refresh_callback = None
 
-def create_daily_entry_view(parent):
+def set_refresh_callback(callback):
+    """Set callback to refresh dashboard after saving"""
+    global _refresh_callback
+    _refresh_callback = callback
+
+
+def create_daily_entry_view(parent, on_save_callback=None):
     """Create and return daily entry form frame"""
+    global _refresh_callback
+    _refresh_callback = on_save_callback
     frame = ttk.Frame(parent)
     frame.pack(fill=BOTH, expand=True)
     
@@ -87,6 +97,10 @@ def create_daily_entry_view(parent):
         
         # Refresh history
         refresh_history()
+        
+        # Trigger dashboard refresh if callback is set
+        if _refresh_callback:
+            _refresh_callback()
     
     # Save button
     ttk.Button(

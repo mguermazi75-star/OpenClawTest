@@ -21,6 +21,7 @@ from views import (
     create_billing_view,
     create_reports_view
 )
+from views.daily_entry import set_refresh_callback
 
 
 class PoultryFarmApp(ttk.Window):
@@ -82,8 +83,8 @@ class PoultryFarmApp(ttk.Window):
         ).pack(side=LEFT)
         
         # Notebook (Tabs)
-        notebook = ttk.Notebook(self)
-        notebook.pack(fill=BOTH, expand=True, padx=10, pady=10)
+        self.nb = ttk.Notebook(self)
+        self.nb.pack(fill=BOTH, expand=True, padx=10, pady=10)
         
         # Create tabs
         self.dashboard_tab = ttk.Frame(notebook)
@@ -92,18 +93,28 @@ class PoultryFarmApp(ttk.Window):
         self.billing_tab = ttk.Frame(notebook)
         self.reports_tab = ttk.Frame(notebook)
         
-        notebook.add(self.dashboard_tab, text="📊 Dashboard")
-        notebook.add(self.daily_tab, text="📝 Daily Entry")
-        notebook.add(self.expenses_tab, text="💰 Expenses")
-        notebook.add(self.billing_tab, text="🧾 Billing")
-        notebook.add(self.reports_tab, text="📈 Reports")
+        self.nb.add(self.dashboard_tab, text="📊 Dashboard")
+        self.nb.add(self.daily_tab, text="📝 Daily Entry")
+        self.nb.add(self.expenses_tab, text="💰 Expenses")
+        self.nb.add(self.billing_tab, text="🧾 Billing")
+        self.nb.add(self.reports_tab, text="📈 Reports")
         
         # Build each tab
         create_dashboard_view(self.dashboard_tab)
-        create_daily_entry_view(self.daily_tab)
+        create_daily_entry_view(self.daily_tab, self.refresh_dashboard)
         create_expenses_view(self.expenses_tab)
         create_billing_view(self.billing_tab)
         create_reports_view(self.reports_tab)
+    
+    def refresh_dashboard(self):
+        """Refresh the dashboard tab"""
+        # Clear existing dashboard
+        for widget in self.dashboard_tab.winfo_children():
+            widget.destroy()
+        # Rebuild dashboard
+        create_dashboard_view(self.dashboard_tab)
+        # Switch to dashboard tab
+        self.nb.select(0)
 
 
 def main():
