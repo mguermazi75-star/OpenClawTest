@@ -36,24 +36,16 @@ def create_dashboard_view(parent):
     style.configure('Custom.TFrame', background=COLORS['bg'])
     
     # Header
-    header_frame = ttk.Frame(frame, style='Custom.TFrame', padding=20)
+    header_frame = ttk.Frame(frame, style='Custom.TFrame', padding=15)
     header_frame.pack(fill=X)
     
     ttk.Label(
         header_frame,
         text="Poultry Farm Dashboard",
-        font=("Helvetica", 24, "bold"),
+        font=("Helvetica", 18, "bold"),
         foreground=COLORS['text'],
         style='Custom.TLabel'
     ).pack(side=LEFT)
-    
-    ttk.Label(
-        header_frame,
-        text="Real-time Overview",
-        font=("Helvetica", 12),
-        foreground=COLORS['text_light'],
-        style='Custom.TLabel'
-    ).pack(side=LEFT, padx=20)
     
     # Get data
     latest_entry = DailyController.get_latest_entry()
@@ -65,7 +57,7 @@ def create_dashboard_view(parent):
     today_egg_price = latest_entry.egg_price if latest_entry else 0.0
     
     # Stats cards - Single row with smaller cards
-    stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(20, 10, 20, 15))
+    stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(15, 8, 15, 10))
     stats_row.pack(fill=X)
     
     create_compact_card(
@@ -117,22 +109,22 @@ def create_dashboard_view(parent):
 def create_compact_card(parent, title: str, value: str, color: str, subtitle: str, column: int):
     """Create a compact stat card"""
     card = ttk.Frame(parent, style='Card.TFrame')
-    card.grid(row=0, column=column, padx=8, sticky="ew")
+    card.grid(row=0, column=column, padx=5, sticky="ew")
     parent.grid_columnconfigure(column, weight=1)
     
     # Color accent bar
-    accent = tk.Frame(card, height=3, bg=color)
+    accent = tk.Frame(card, height=2, bg=color)
     accent.pack(fill=X)
     
     # Content
-    content = ttk.Frame(card, padding=10)
+    content = ttk.Frame(card, padding=6)
     content.pack(fill=BOTH, expand=True)
     
     # Title
     ttk.Label(
         content,
         text=title,
-        font=("Helvetica", 9),
+        font=("Helvetica", 8),
         foreground=COLORS['text_light']
     ).pack(anchor=W)
     
@@ -140,15 +132,15 @@ def create_compact_card(parent, title: str, value: str, color: str, subtitle: st
     ttk.Label(
         content,
         text=value,
-        font=("Helvetica", 18, "bold"),
+        font=("Helvetica", 14, "bold"),
         foreground=color
-    ).pack(anchor=W, pady=2)
+    ).pack(anchor=W, pady=1)
     
     # Subtitle
     ttk.Label(
         content,
         text=subtitle,
-        font=("Helvetica", 8),
+        font=("Helvetica", 7),
         foreground=COLORS['text_light']
     ).pack(anchor=W)
     
@@ -176,7 +168,7 @@ def create_charts_frame(parent):
     egg_prices = [entry.egg_price for entry in entries]
     
     # Create figure with custom styling
-    fig = Figure(figsize=(12, 3.5), dpi=100)
+    fig = Figure(figsize=(12, 4), dpi=100)
     fig.patch.set_facecolor('#FFFFFF')
     
     # Production chart (line with fill)
