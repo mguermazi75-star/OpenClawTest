@@ -21,17 +21,17 @@ def init_db():
         CREATE TABLE IF NOT EXISTS daily_entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT NOT NULL,
-            stock INTEGER,
-            mortality INTEGER,
-            production INTEGER,
+            mortality INTEGER DEFAULT 0,
+            production INTEGER DEFAULT 0,
+            eggs_sold INTEGER DEFAULT 0,
             egg_price REAL DEFAULT 0.0,
             notes TEXT
         )
     ''')
     
-    # Add egg_price column if it doesn't exist (for existing databases)
+    # Add eggs_sold column if it doesn't exist (for existing databases)
     try:
-        cursor.execute('ALTER TABLE daily_entries ADD COLUMN egg_price REAL DEFAULT 0.0')
+        cursor.execute('ALTER TABLE daily_entries ADD COLUMN eggs_sold INTEGER DEFAULT 0')
     except sqlite3.OperationalError:
         pass  # Column already exists
     

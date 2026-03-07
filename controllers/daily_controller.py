@@ -17,9 +17,9 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO daily_entries (date, stock, mortality, production, egg_price, notes)
+            INSERT INTO daily_entries (date, mortality, production, eggs_sold, egg_price, notes)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (entry.date, entry.stock, entry.mortality, entry.production, entry.egg_price, entry.notes))
+        ''', (entry.date, entry.mortality, entry.production, entry.eggs_sold, entry.egg_price, entry.notes))
         
         conn.commit()
         conn.close()
@@ -32,7 +32,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, egg_price, notes
+            SELECT id, date, mortality, production, eggs_sold, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT ?
@@ -46,9 +46,9 @@ class DailyController:
             entries.append(DailyEntry(
                 id=row[0],
                 date=row[1],
-                stock=row[2],
-                mortality=row[3],
-                production=row[4],
+                mortality=row[2],
+                production=row[3],
+                eggs_sold=row[4] or 0,
                 egg_price=row[5] or 0.0,
                 notes=row[6] or ""
             ))
@@ -62,7 +62,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, egg_price, notes
+            SELECT id, date, mortality, production, eggs_sold, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT 1
@@ -75,9 +75,9 @@ class DailyController:
             return DailyEntry(
                 id=row[0],
                 date=row[1],
-                stock=row[2],
-                mortality=row[3],
-                production=row[4],
+                mortality=row[2],
+                production=row[3],
+                eggs_sold=row[4] or 0,
                 egg_price=row[5] or 0.0,
                 notes=row[6] or ""
             )
@@ -90,7 +90,7 @@ class DailyController:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, date, stock, mortality, production, egg_price, notes
+            SELECT id, date, mortality, production, eggs_sold, egg_price, notes
             FROM daily_entries
             ORDER BY date DESC
             LIMIT ?
@@ -103,9 +103,9 @@ class DailyController:
             DailyEntry(
                 id=row[0],
                 date=row[1],
-                stock=row[2],
-                mortality=row[3],
-                production=row[4],
+                mortality=row[2],
+                production=row[3],
+                eggs_sold=row[4] or 0,
                 egg_price=row[5] or 0.0,
                 notes=row[6] or ""
             )
@@ -124,7 +124,7 @@ class DailyController:
             SELECT 
                 COALESCE(SUM(production), 0) as total_production,
                 COALESCE(SUM(mortality), 0) as total_mortality,
-                COALESCE(AVG(stock), 0) as avg_stock
+                COALESCE(SUM(eggs_sold), 0) as total_sold
             FROM daily_entries 
             WHERE date LIKE '{month}%'
         ''')
@@ -135,7 +135,7 @@ class DailyController:
         return {
             'production': row[0],
             'mortality': row[1],
-            'avg_stock': row[2]
+            'eggs_sold': row[2]
         }
     
     @staticmethod

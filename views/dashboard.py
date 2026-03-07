@@ -39,18 +39,19 @@ def create_dashboard_view(parent):
     latest_entry = DailyController.get_latest_entry()
     monthly_expenses = ExpenseController.get_monthly_expenses()
     
-    current_stock = latest_entry.stock if latest_entry else 0
     today_mortality = latest_entry.mortality if latest_entry else 0
     today_production = latest_entry.production if latest_entry else 0
+    today_eggs_sold = latest_entry.eggs_sold if latest_entry else 0
     today_egg_price = latest_entry.egg_price if latest_entry else 0.0
-    
-    # Calculate remaining chickens (initial 30000 - cumulative mortality)
-    total_mortality = sum(e.mortality for e in DailyController.get_entries_for_week(365))
-    remaining_chickens = 30000 - total_mortality
+    today_remaining = today_production - today_eggs_sold
     
     # Stats cards - Single row with smaller cards
     stats_row = ttk.Frame(frame, style='Custom.TFrame', padding=(15, 8, 15, 10))
     stats_row.pack(fill=X)
+    
+    # Configure grid columns for 7 cards
+    for i in range(7):
+        stats_row.grid_columnconfigure(i, weight=1)
     
     create_compact_card(
         stats_row, "Chickens", str(remaining_chickens), 
@@ -61,16 +62,24 @@ def create_dashboard_view(parent):
         COLORS['mortality'], "today", 1
     )
     create_compact_card(
-        stats_row, "Production", str(today_production), 
+        stats_row, "Produced", str(today_production), 
         COLORS['production'], "eggs", 2
     )
     create_compact_card(
-        stats_row, "Egg Price", f"€{today_egg_price:.2f}", 
-        COLORS['egg_price'], "per egg", 3
+        stats_row, "Sold", str(today_eggs_sold), 
+        COLORS['egg_price'], "eggs", 3
+    )
+    create_compact_card(
+        stats_row, "Remaining", str(today_remaining), 
+        COLORS['production'], "unsold", 4
+    )
+    create_compact_card(
+        stats_row, "Price", f"€{today_egg_price:.2f}", 
+        COLORS['egg_price'], "per egg", 5
     )
     create_compact_card(
         stats_row, "Expenses", f"€{monthly_expenses:.2f}", 
-        COLORS['expenses'], "this month", 4
+        COLORS['expenses'], "this month", 6
     )
     
     # Charts section
@@ -240,11 +249,13 @@ def create_activity_table(parent):
     
     # Configure columns
     columns = [
-        ("Date", 120, "w"),
-        ("Remaining", 100, "e"),
-        ("Mortality", 100, "e"),
-        ("Production", 100, "e"),
-        ("Egg Price", 100, "e")
+        ("Date", 100, "w"),
+        ("Chickens", 80, "e"),
+        ("Mortality", 80, "e"),
+        ("Produced", 80, "e"),
+        ("Sold", 80, "e"),
+        ("Remaining", 80, "e"),
+        ("Price", 80, "e")
     ]
     
     for col, width, anchor in columns:
@@ -258,12 +269,15 @@ def create_activity_table(parent):
     cumulative = 30000
     for i, entry in enumerate(entries):
         cumulative -= entry.mortality
+        eggs_remaining = entry.production - entry.eggs_sold
         tags = ('odd',) if i % 2 else ('even',)
         tree.insert("", END, values=(
             entry.date,
             cumulative,
             entry.mortality,
             entry.production,
+            entry.eggs_sold,
+            eggs_remaining,
             f"€{entry.egg_price:.2f}"
         ), tags=tags)
     

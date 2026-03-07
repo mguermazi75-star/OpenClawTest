@@ -12,16 +12,16 @@ class DailyEntry:
     """Daily farm data entry"""
     id: Optional[int] = None
     date: str = ""
-    stock: int = 0
-    mortality: int = 0
-    production: int = 0
+    mortality: int = 0  # Chicken deaths
+    production: int = 0  # Eggs produced
+    eggs_sold: int = 0  # Eggs sold
     egg_price: float = 0.0  # Price per egg in EUR
     notes: str = ""
     
     @property
-    def remaining(self) -> int:
-        """Calculate remaining chickens"""
-        return self.stock - self.mortality
+    def remaining_eggs(self) -> int:
+        """Calculate remaining (unsold) eggs"""
+        return self.production - self.eggs_sold
 
 
 @dataclass
