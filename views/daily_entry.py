@@ -97,7 +97,7 @@ def create_daily_entry_view(parent, on_save_callback=None):
     expense_desc_entry = ttk.Entry(exp_card, width=20)
     expense_desc_entry.grid(row=2, column=1, sticky=W, pady=5)
     
-    # Message & Button
+    # Message label
     msg_label = ttk.Label(left, text="", font=("Segoe UI", 9))
     msg_label.pack(pady=5)
     
@@ -105,13 +105,7 @@ def create_daily_entry_view(parent, on_save_callback=None):
     right = ttk.LabelFrame(main, text=" Entry History ", padding=10)
     right.pack(side=RIGHT, fill=BOTH, expand=True)
     
-    # Buttons
-    btn_frame = ttk.Frame(right)
-    btn_frame.pack(fill=X, pady=(0, 8))
-    ttk.Button(btn_frame, text="Delete", bootstyle="danger", command=delete_entry).pack(side=RIGHT)
-    ttk.Button(btn_frame, text="Refresh", bootstyle="secondary", command=refresh_history).pack(side=RIGHT, padx=(0, 5))
-    
-    # Treeview
+    # Treeview (define before buttons that use it)
     style = ttk.Style()
     style.configure("Treeview", font=("Segoe UI", 8), rowheight=25)
     style.configure("Treeview.Heading", font=("Segoe UI", 8, "bold"))
@@ -137,7 +131,7 @@ def create_daily_entry_view(parent, on_save_callback=None):
     tree.configure(yscrollcommand=scrollbar.set)
     scrollbar.pack(side=RIGHT, fill=Y)
     
-    # Define functions first
+    # Define all functions first
     def save_all():
         date = date_entry.entry.get()
         if not date:
@@ -230,7 +224,12 @@ def create_daily_entry_view(parent, on_save_callback=None):
                 f"€{exp_amount:.0f}" if exp_amount > 0 else "-"
             ))
     
-    # Now add the button after functions are defined
+    # Now add buttons (after functions are defined)
+    btn_frame = ttk.Frame(right)
+    btn_frame.pack(fill=X, pady=(0, 8))
+    ttk.Button(btn_frame, text="Delete", bootstyle="danger", command=delete_entry).pack(side=RIGHT)
+    ttk.Button(btn_frame, text="Refresh", bootstyle="secondary", command=refresh_history).pack(side=RIGHT, padx=(0, 5))
+    
     ttk.Button(
         left,
         text="Save Entry",
